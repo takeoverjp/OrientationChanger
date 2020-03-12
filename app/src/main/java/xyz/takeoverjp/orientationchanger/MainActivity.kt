@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var mTvCurrent: TextView
     private lateinit var mSpChange: Spinner
     private lateinit var mSpNext: Spinner
     private lateinit var mBtGotoNext: Button
@@ -98,6 +100,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        mTvCurrent = findViewById(R.id.tv_current_orientation)
+        mTvCurrent.text = getResources().getConfiguration().orientation.toString()
         mSpChange = findViewById(R.id.sp_change_orientation)
         val mainActivity = this
         mSpChange.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -158,5 +162,11 @@ class MainActivity : AppCompatActivity() {
                 .build()
             manager.notify(mNextOrientation, notification)
         }
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        mTvCurrent.text = getResources().getConfiguration().orientation.toString()
     }
 }

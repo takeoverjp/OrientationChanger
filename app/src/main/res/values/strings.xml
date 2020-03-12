@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">OrientationChanger</string>
-    <string name="tv_current">Current screenOrientation</string>
+    <string name="tv_current">Configuration.orientation</string>
     <string name="tv_change">Change screenOrientation</string>
     <string name="tv_next">Next screenOrientation</string>
     <string-array name="screen_orientation">
