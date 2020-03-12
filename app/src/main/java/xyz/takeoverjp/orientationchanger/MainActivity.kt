@@ -24,51 +24,70 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mBtGotoNext: Button
     private lateinit var mBtNotification: Button
     private var mNextOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+    private data class Orientation(val id: Int, val name: String, val _class: Class<Activity>)
 
-    private fun convertStr2Id(str: String) : Int {
-        return when(str) {
-            "unspecified" -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-            "behind" -> ActivityInfo.SCREEN_ORIENTATION_BEHIND
-            "landscape" -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            "portrait" -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            "reverseLandscape" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-            "reversePortrait" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
-            "sensorLandscape" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-            "sensorPortrait" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-            "userLandscape" -> ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
-            "userPortrait" -> ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
-            "sensor" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR
-            "fullSensor" -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-            "nosensor" -> ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
-            "user" -> ActivityInfo.SCREEN_ORIENTATION_USER
-            "fullUser" -> ActivityInfo.SCREEN_ORIENTATION_FULL_USER
-            "locked" -> ActivityInfo.SCREEN_ORIENTATION_LOCKED
-            else -> TODO("Not Implemented$str")
-        }
+    @Suppress("UNCHECKED_CAST")
+    private val orientations = arrayOf(
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED,
+            "unspecified",
+            UnspecifiedActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_BEHIND,
+            "behind",
+            BehindActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE,
+            "landscape",
+            LandscapeActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+            "portrait",
+            PortraitActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE,
+            "reverseLandscape",
+            ReverseLandscapeActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT,
+            "reversePortrait",
+            ReversePortraitActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE,
+            "sensorLandscape",
+            SensorLandscapeActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT,
+            "sensorPortrait",
+            SensorPortraitActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE,
+            "userLandscape",
+            UserLandscapeActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT,
+            "userPortrait",
+            UserPortraitActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR,
+            "sensor",
+            SensorActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR,
+            "fullSensor",
+            FullSensorActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR,
+            "nosensor",
+            NosensorActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_USER,
+            "user",
+            UserActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_FULL_USER,
+            "fullUser",
+            FullUserActivity::class.java as Class<Activity>),
+        Orientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED,
+            "locked",
+            LockedActivity::class.java as Class<Activity>)
+    )
+
+    private fun convertName2Id(name: String) : Int {
+        val orientation = orientations.find {it.name == name}
+        return orientation!!.id
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun convertId2Class(id: Int?): Class<Activity> {
         if (id == null) return UndefinedActivity::class.java as Class<Activity>
-        return when(id) {
-            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED -> UnspecifiedActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_BEHIND -> BehindActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> LandscapeActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> PortraitActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE -> ReverseLandscapeActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT -> ReversePortraitActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE -> SensorLandscapeActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT -> SensorPortraitActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE -> UserLandscapeActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT -> UserPortraitActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR -> SensorActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR -> FullSensorActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_NOSENSOR -> NosensorActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_USER -> UserActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_FULL_USER -> UserActivity::class.java
-            ActivityInfo.SCREEN_ORIENTATION_LOCKED -> LockedActivity::class.java
-            else -> TODO("Not Implemented$id")
-        } as Class<Activity>
+        val orientation = orientations.find {it.id == id}
+        return orientation!!._class
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +105,7 @@ class MainActivity : AppCompatActivity() {
             ) {
                 if (view == null) return
                 val tv = view as TextView
-                mainActivity.requestedOrientation = convertStr2Id(tv.text.toString())
+                mainActivity.requestedOrientation = convertName2Id(tv.text.toString())
                 Log.d("Main", "sp_change_orientation: activity.requestedOrientation=${mainActivity.requestedOrientation}")
             }
         }
@@ -101,7 +120,7 @@ class MainActivity : AppCompatActivity() {
             ) {
                 if (view == null) return
                 val tv = view as TextView
-                mNextOrientation = convertStr2Id(tv.text.toString())
+                mNextOrientation = convertName2Id(tv.text.toString())
                 Log.d("Main", "sp_next_orientation: mNextOrientation=$mNextOrientation")
             }
         }
