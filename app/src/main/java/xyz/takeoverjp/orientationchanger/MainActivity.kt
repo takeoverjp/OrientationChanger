@@ -1,8 +1,13 @@
 package xyz.takeoverjp.orientationchanger
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,6 +16,7 @@ import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mSpChange: Spinner
@@ -105,9 +111,28 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(mainActivity, convertId2Class(mNextOrientation))
             startActivity(intent)
         }
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "start_activity_channel_id",
+                "Start Activity Channel",
+                NotificationManager.IMPORTANCE_DEFAULT)
+            manager.createNotificationChannel(channel)
+        }
         mBtNotification = findViewById(R.id.bt_notification)
         mBtNotification.setOnClickListener {
             Log.d("Main", "bt_notification: mNextOrientation=$mNextOrientation")
+            val intent = Intent(applicationContext, convertId2Class(mNextOrientation))
+            val pendinIntent = PendingIntent.getActivity(applicationContext,
+                0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+            val notification = NotificationCompat.Builder(applicationContext,
+            "start_activity_channel_id")
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle("OrientationChanger")
+                .setContentText("Go to $mNextOrientation Activity")
+                .setContentIntent(pendinIntent)
+                .build()
+            manager.notify(mNextOrientation, notification)
         }
     }
 }
