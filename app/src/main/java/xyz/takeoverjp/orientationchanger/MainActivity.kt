@@ -83,6 +83,11 @@ class MainActivity : AppCompatActivity() {
         return orientation!!.id
     }
 
+    private fun convertId2Name(id: Int) : String {
+        val orientation = orientations.find {it.id == id}
+        return orientation!!.name
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun convertId2Class(id: Int?): Class<Activity> {
         if (id == null) return UndefinedActivity::class.java as Class<Activity>
@@ -148,7 +153,7 @@ class MainActivity : AppCompatActivity() {
             "start_activity_channel_id")
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setContentTitle("OrientationChanger")
-                .setContentText("Go to $mNextOrientation Activity")
+                .setContentText("Go to ${convertId2Name(mNextOrientation)}($mNextOrientation) Activity")
                 .setContentIntent(pendinIntent)
                 .build()
             manager.notify(mNextOrientation, notification)
